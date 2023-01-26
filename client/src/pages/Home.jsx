@@ -37,6 +37,7 @@ export default function Home() {
           className="mt-2 text-[#666e75] text-[16px]
         max-w-[500px]"
         >
+          {" "}
           Browse through a collection of imaginative and visually stunning
           images created by AI
         </p>
