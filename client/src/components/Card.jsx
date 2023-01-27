@@ -37,7 +37,7 @@ export default function Card({ _id, name, prompt, photo }) {
           <button
             type="button"
             onClick={() => {
-              downloadImage(_id, photo);
+              downloadImage({ _id, photo });
             }}
             className="outline-none bg-transparent border-none"
           >
