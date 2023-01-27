@@ -1,13 +1,18 @@
 import Loader from "../components/Loader";
 import Card from "../components/Card";
 import FormField from "../components/FormField";
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 const RenderCards = ({ data, title }) => {
   if (data?.length > 0) {
-    return data.map((post) => {
-      <Card key={post._id} {...post} />;
-    });
+    return data.map((post) => (
+      <Card
+        key={post._id}
+        name={post.name}
+        prompt={post.prompt}
+        photo={post.photo}
+      />
+    ));
   }
   return (
     <h2
@@ -21,8 +26,34 @@ const RenderCards = ({ data, title }) => {
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
-  const [allPosts, setAllPosts] = useState(null);
+  const allPosts = useRef(null);
   const [searchText, setSearchText] = useState("");
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      setLoading(true);
+      try {
+        await fetch("http://localhost:8000/api/v1/post", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => {
+            return response.json();
+          })
+          .then((result) => {
+            allPosts.current = result.data.reverse();
+          });
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, [allPosts]);
 
   return (
     <section className="max-w-7xl mx-auto">
@@ -68,7 +99,7 @@ export default function Home() {
               {searchText ? (
                 <RenderCards data={[]} title="No search results found" />
               ) : (
-                <RenderCards data={[]} title="No posts found" />
+                <RenderCards data={allPosts.current} title="No posts found" />
               )}
             </div>
           </>
